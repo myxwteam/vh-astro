@@ -36,8 +36,8 @@ const modelList = [
 function getRandomModelConfig(person) {
     const randomIndex = Math.floor(Math.random() * modelList.length);
     const modelName = modelList[randomIndex];
-    // 使用绝对路径，因为Blob URL不支持相对路径
-    const baseUrl = window.location.origin + '/';
+    // 使用根相对路径（相对于域名根目录）
+    const baseUrl = '/';
     
     return {
         type: "Live2D Model Setting",
@@ -153,14 +153,10 @@ $('.waifu-tool .street-view').off('click').click(function (){
     const config = getRandomModelConfig(person);
     console.log('Waifu: 换衣服到', config.name);
     
-    // 创建临时JSON URL
-    const blob = new Blob([JSON.stringify(config)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
+    // 使用 Data URL（相对路径基于当前页面，不是JSON）
+    const dataUrl = 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(config))));
     
-    loadlive2d('live2d', url);
-    
-    // 清理URL对象
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    loadlive2d('live2d', dataUrl);
     
     showMessage('我的新衣服好看嘛',4000);
 });
