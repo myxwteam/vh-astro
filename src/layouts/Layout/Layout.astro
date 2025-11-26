@@ -88,12 +88,10 @@ import "./Layout.less";
             );
           }
 
-          // 2. 加载Live2D核心库
+          // 2. 加载Live2D核心库 (本地文件)
           if (typeof loadlive2d === "undefined") {
             console.log("Live2D: 加载Live2D核心库...");
-            await loadScript(
-              "https://cdn.jsdelivr.net/gh/xb2016/kratos-pjax@0.3.6/static/js/live2d.js"
-            );
+            await loadScript("/2233/js/live2d.js");
           }
 
           // 3. 加载waifu-tips
@@ -125,7 +123,7 @@ import "./Layout.less";
     />
   </Head>
   <body>
-    <!-- Live2D 看板娘 (移到最前面) -->
+    <!-- Live2D 看板娘 -->
     <Live2D />
     <MobileSidebar />
     <Header activeNav={activeNav} />
