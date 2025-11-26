@@ -38,13 +38,14 @@ function getTexture(modelName: string, textureIndex: number): string {
   return textures;
 }
 
-export const GET: APIRoute = ({ url }) => {
-  const params = url.searchParams;
-  const person_ = params.get('p');
-  const id_ = params.get('id');
+export const GET: APIRoute = ({ url, request }) => {
+  // 手动解析 URL 参数 - 兼容 Cloudflare Workers
+  const urlObj = new URL(request.url);
+  const person_ = urlObj.searchParams.get('p');
+  const id_ = urlObj.searchParams.get('id');
 
   console.log('=== Live2D API V2 调试 ===');
-  console.log('请求URL:', url.href);
+  console.log('请求URL:', request.url);
   console.log('person_:', person_);
   console.log('id_:', id_);
 
