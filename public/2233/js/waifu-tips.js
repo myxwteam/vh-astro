@@ -81,11 +81,13 @@ $('.waifu-tool .street-view').off('click').click(function (){
     if(window.waifuGlobals.model_p===22){
         window.waifuGlobals.m22_id += 1;
         console.log('Waifu: 给22娘换衣服, id=', window.waifuGlobals.m22_id);
-        loadlive2d('live2d','/api/live2d-22.json?id='+window.waifuGlobals.m22_id)
+        // 添加时间戳确保每次请求都是唯一的，API会重新随机选择衣服
+        loadlive2d('live2d','/api/live2d-22.json?t='+Date.now())
     }else{
         window.waifuGlobals.m33_id += 1;
         console.log('Waifu: 给33娘换衣服, id=', window.waifuGlobals.m33_id);
-        loadlive2d('live2d','/api/live2d-33.json?id='+window.waifuGlobals.m33_id)
+        // 添加时间戳确保每次请求都是唯一的，API会重新随机选择衣服
+        loadlive2d('live2d','/api/live2d-33.json?t='+Date.now())
     }
     showMessage('我的新衣服好看嘛',4000);
 });
