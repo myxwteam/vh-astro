@@ -86,6 +86,8 @@ export const GET: APIRoute = ({ url, request }) => {
     debug_timestamp: Date.now(),
     debug_model_id: id,
     debug_model_name: modelName,
+    debug_model_param: modelName_,
+    debug_t_param: t_,
     model: `${baseUrl}2233/model/${person}/${person}.v2.moc`,
     textures: [
       `${baseUrl}2233/model/${person}/texture_00.png`,
