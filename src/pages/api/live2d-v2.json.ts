@@ -40,46 +40,33 @@ function getTexture(modelName: string, textureIndex: number): string {
 
 export const GET: APIRoute = ({ url }) => {
   const params = url.searchParams;
-  const personParam = params.get('p');
-  const idParam = params.get('id');
+  const person_ = params.get('p');
+  const id_ = params.get('id');
 
   console.log('=== Live2D API V2 调试 ===');
   console.log('请求URL:', url.href);
-  console.log('personParam:', personParam);
-  console.log('idParam:', idParam);
+  console.log('person_:', person_);
+  console.log('id_:', id_);
 
   const modelNames = Object.keys(modelList);
   let modelNum = modelNames.length;
   if (!R18) modelNum -= 1;
 
+  // 参数转化 - 完全按照PHP逻辑
   let id: number;
-  if (idParam && !isNaN(parseInt(idParam))) {
-    id = parseInt(idParam) % modelNum;
+  if (id_ && !isNaN(parseInt(id_))) {
+    id = parseInt(id_) % modelNum;
   } else if (DEFAULT_ID !== null) {
     id = DEFAULT_ID;
   } else {
     id = Math.floor(Math.random() * modelNum);
   }
 
-  // 明确的人物判断
-  let person: string;
-  console.log('personParam 原始值:', personParam);
-  console.log('personParam 类型:', typeof personParam);
-  console.log('personParam === "22":', personParam === "22");
-  console.log('personParam === "33":', personParam === "33");
-  
-  // 强制字符串比较
-  if (String(personParam) === "22") {
-    person = "22";
-    console.log('选择了22娘');
-  } else if (String(personParam) === "33") {
-    person = "33";
-    console.log('选择了33娘');
-  } else {
-    // 如果没有参数，根据随机数决定
-    person = Math.random() > 0.5 ? "22" : "33";
-    console.log('使用随机选择:', person);
-  }
+  // 参数转化 - 完全按照PHP的三元运算符逻辑
+  // $person_ == "22" || $person_ == "33" ? $person = $person_ : $person = ["22","33"][mt_rand(0,1)];
+  const person = (person_ === "22" || person_ === "33") 
+    ? person_ 
+    : ["22", "33"][Math.floor(Math.random() * 2)];
 
   console.log('最终 person:', person);
   console.log('最终 id:', id);
