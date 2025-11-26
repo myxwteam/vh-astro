@@ -39,13 +39,41 @@ function getTexture(modelName: string, textureIndex: number): string {
 }
 
 export const GET: APIRoute = ({ url, request }) => {
-  // 手动解析 URL 参数 - 兼容 Cloudflare Workers
-  const urlObj = new URL(request.url);
-  const person_ = urlObj.searchParams.get('p');
-  const id_ = urlObj.searchParams.get('id');
+  // 多种方法尝试获取参数
+  let person_: string | null = null;
+  let id_: string | null = null;
+  
+  // 方法1: 从 request.url
+  try {
+    const urlObj = new URL(request.url);
+    person_ = urlObj.searchParams.get('p');
+    id_ = urlObj.searchParams.get('id');
+  } catch (e) {
+    console.error('方法1失败:', e);
+  }
+  
+  // 方法2: 从 url 对象
+  if (!person_ && !id_) {
+    try {
+      person_ = url.searchParams.get('p');
+      id_ = url.searchParams.get('id');
+    } catch (e) {
+      console.error('方法2失败:', e);
+    }
+  }
+  
+  // 方法3: 手动解析URL字符串
+  if (!person_ && !id_) {
+    const urlString = request.url || url.href;
+    const match = urlString.match(/[?&]p=([^&]*)/);
+    const matchId = urlString.match(/[?&]id=([^&]*)/);
+    if (match) person_ = match[1];
+    if (matchId) id_ = matchId[1];
+  }
 
   console.log('=== Live2D API V2 调试 ===');
   console.log('请求URL:', request.url);
+  console.log('url.href:', url.href);
   console.log('person_:', person_);
   console.log('id_:', id_);
 
