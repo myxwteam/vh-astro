@@ -36,7 +36,8 @@ const modelList = [
 function getRandomModelConfig(person) {
     const randomIndex = Math.floor(Math.random() * modelList.length);
     const modelName = modelList[randomIndex];
-    const baseUrl = '../';
+    // 使用绝对路径，因为Blob URL不支持相对路径
+    const baseUrl = window.location.origin + '/';
     
     return {
         type: "Live2D Model Setting",
