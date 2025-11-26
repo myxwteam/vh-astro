@@ -67,14 +67,18 @@ export const GET: APIRoute = ({ url }) => {
 
   // 确定角色 (22娘或33娘)
   let person: string;
-  if (personParam === "22" || personParam === "33") {
-    person = personParam;
+  if (personParam === "22") {
+    person = "22";
+  } else if (personParam === "33") {
+    person = "33";
   } else {
     person = Math.random() > 0.5 ? "22" : "33";
   }
 
   console.log('最终 person:', person);
   console.log('最终 id:', id);
+  console.log('personParam 原始值:', personParam);
+  console.log('personParam 类型:', typeof personParam);
 
   // 获取模型名称
   const modelName = modelNames[id];
