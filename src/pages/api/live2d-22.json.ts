@@ -25,11 +25,9 @@ const modelList: Record<string, (string | string[])[]> = {
   "2018.playwater": ["texture_01.png", "texture_02.png", "texture_03.png"]
 };
 
-// 配置项
 const DEFAULT_ID: number | null = null;
 const R18 = false;
 
-// 获取材质
 function getTexture(modelName: string, textureIndex: number): string {
   const textures = modelList[modelName][textureIndex];
   if (Array.isArray(textures)) {
@@ -39,49 +37,25 @@ function getTexture(modelName: string, textureIndex: number): string {
 }
 
 export const GET: APIRoute = ({ url, request }) => {
-  // 多种方法尝试获取参数
-  let person_: string | null = null;
-  let id_: string | null = null;
+  // 固定为 22娘
+  const person = "22";
   
-  // 方法1: 从 request.url
+  // 尝试多种方式获取 id 参数
+  let id_: string | null = null;
   try {
     const urlObj = new URL(request.url);
-    person_ = urlObj.searchParams.get('p');
     id_ = urlObj.searchParams.get('id');
   } catch (e) {
-    console.error('方法1失败:', e);
-  }
-  
-  // 方法2: 从 url 对象
-  if (!person_ && !id_) {
-    try {
-      person_ = url.searchParams.get('p');
-      id_ = url.searchParams.get('id');
-    } catch (e) {
-      console.error('方法2失败:', e);
-    }
-  }
-  
-  // 方法3: 手动解析URL字符串
-  if (!person_ && !id_) {
+    // 尝试从 URL 字符串解析
     const urlString = request.url || url.href;
-    const match = urlString.match(/[?&]p=([^&]*)/);
     const matchId = urlString.match(/[?&]id=([^&]*)/);
-    if (match) person_ = match[1];
     if (matchId) id_ = matchId[1];
   }
-
-  console.log('=== Live2D API V2 调试 ===');
-  console.log('请求URL:', request.url);
-  console.log('url.href:', url.href);
-  console.log('person_:', person_);
-  console.log('id_:', id_);
 
   const modelNames = Object.keys(modelList);
   let modelNum = modelNames.length;
   if (!R18) modelNum -= 1;
 
-  // 参数转化 - 完全按照PHP逻辑
   let id: number;
   if (id_ && !isNaN(parseInt(id_))) {
     id = parseInt(id_) % modelNum;
@@ -91,42 +65,13 @@ export const GET: APIRoute = ({ url, request }) => {
     id = Math.floor(Math.random() * modelNum);
   }
 
-  // 参数转化 - 完全按照PHP的三元运算符逻辑
-  // $person_ == "22" || $person_ == "33" ? $person = $person_ : $person = ["22","33"][mt_rand(0,1)];
-  console.log('>>> 判断前: person_ =', person_);
-  console.log('>>> person_ === "22" =', person_ === "22");
-  console.log('>>> person_ === "33" =', person_ === "33");
-  console.log('>>> person_ == "22" =', person_ == "22");
-  console.log('>>> person_ == "33" =', person_ == "33");
-  console.log('>>> typeof person_ =', typeof person_);
-  
-  const person = (person_ === "22" || person_ === "33") 
-    ? person_ 
-    : ["22", "33"][Math.floor(Math.random() * 2)];
-
-  console.log('最终 person:', person);
-  console.log('最终 id:', id);
-
   const modelName = modelNames[id];
-  console.log('modelName:', modelName);
-  console.log('=======================');
-
   const baseUrl = '../';
+  
   const live2dConfig = {
     type: "Live2D Model Setting",
     name: `${person}-${modelName}`,
     label: person,
-    timestamp: Date.now(),
-    debug: {
-      person_param: person_,
-      person_param_type: typeof person_,
-      person_equals_22: person_ === "22",
-      person_equals_33: person_ === "33",
-      final_person: person,
-      id_param: id_,
-      final_id: id,
-      model_name: modelName
-    },
     model: `${baseUrl}2233/model/${person}/${person}.v2.moc`,
     textures: [
       `${baseUrl}2233/model/${person}/texture_00.png`,
@@ -159,15 +104,15 @@ export const GET: APIRoute = ({ url, request }) => {
         },
         {
           file: `${baseUrl}2233/model/${person}/${person}.v2.idle-03.mtn`,
-          fade_in: person === "22" ? 100 : 2000,
-          fade_out: person === "22" ? 100 : 2000
+          fade_in: 100,
+          fade_out: 100
         }
       ],
       tap_body: [
         {
           file: `${baseUrl}2233/model/${person}/${person}.v2.touch.mtn`,
-          fade_in: person === "22" ? 500 : 150,
-          fade_out: person === "22" ? 200 : 100
+          fade_in: 500,
+          fade_out: 200
         }
       ],
       thanking: [
