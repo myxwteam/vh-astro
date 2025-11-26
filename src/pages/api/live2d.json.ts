@@ -91,6 +91,7 @@ export const GET: APIRoute = ({ url }) => {
     type: "Live2D Model Setting",
     name: `${person}-${modelName}`,
     label: person,
+    timestamp: Date.now(), // 添加时间戳防止缓存
     model: `${baseUrl}2233/model/${person}/${person}.v2.moc`,
     textures: [
       `${baseUrl}2233/model/${person}/texture_00.png`,
@@ -147,7 +148,10 @@ export const GET: APIRoute = ({ url }) => {
   return new Response(JSON.stringify(live2dConfig), {
     status: 200,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
     }
   });
 };
