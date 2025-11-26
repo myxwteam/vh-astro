@@ -80,6 +80,21 @@ import "./Layout.less";
         try {
           console.log("Live2D: 开始加载...");
 
+          // 0. 等待Live2D HTML元素存在
+          let waifuElement = document.querySelector(".waifu");
+          if (!waifuElement) {
+            console.log("Live2D: 等待HTML元素...");
+            await new Promise((resolve) => {
+              const checkElement = setInterval(() => {
+                if (document.querySelector(".waifu")) {
+                  clearInterval(checkElement);
+                  console.log("Live2D: HTML元素已就绪");
+                  resolve();
+                }
+              }, 100);
+            });
+          }
+
           // 1. 加载jQuery
           if (typeof jQuery === "undefined") {
             console.log("Live2D: 加载jQuery...");
@@ -105,12 +120,28 @@ import "./Layout.less";
         }
       }
 
-      // 等待DOM加载完成后初始化
+      // 多种方式确保初始化执行
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", initLive2D);
+        // 兜底：3秒后如果还没初始化就强制执行
+        setTimeout(() => {
+          if (!window.live2dInitialized) {
+            console.log("Live2D: 触发兜底初始化");
+            initLive2D();
+          }
+        }, 3000);
       } else {
+        // 页面已经加载完成，立即执行
         initLive2D();
       }
+
+      // 再加一个window.onload兜底
+      window.addEventListener("load", () => {
+        if (!window.live2dInitialized) {
+          console.log("Live2D: window.onload触发初始化");
+          initLive2D();
+        }
+      });
     </script>
 
     <!-- 设置主题颜色 -->
