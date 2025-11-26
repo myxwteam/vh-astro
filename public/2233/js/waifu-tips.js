@@ -81,16 +81,17 @@ $('.waifu-tool .drivers-license-o').off('click').click(function(){
         showMessage('看板娘还没准备好呢~',2000);
         return;
     }
+    const cacheBuster = Date.now();
     if(window.waifuGlobals.model_p===33){
         // 当前是33娘，切换到22娘
         console.log('Waifu: 从33娘切换到22娘');
-        loadlive2d('live2d','/api/live2d-22.json?id='+window.waifuGlobals.m22_id);
+        loadlive2d('live2d','/api/live2d-22.json?_=' + cacheBuster);
         window.waifuGlobals.model_p = 22;
         showMessage('33援交有点累了，现在该我上场了',4000) // 22娘说的话
     }else{
         // 当前是22娘，切换到33娘
         console.log('Waifu: 从22娘切换到33娘');
-        loadlive2d('live2d','/api/live2d-33.json?id='+window.waifuGlobals.m33_id);
+        loadlive2d('live2d','/api/live2d-33.json?_=' + cacheBuster);
         window.waifuGlobals.model_p = 33;
         showMessage('我又回来了！',4000) // 33娘说的话
     }
@@ -108,11 +109,12 @@ $('.waifu-tool .street-view').off('click').click(function (){
     const modelName = modelList[randomIndex];
     console.log('Waifu: 换衣服到', modelName);
     
-    // 使用model参数调用API
+    // 使用model参数调用API，并添加时间戳破坏缓存
+    const cacheBuster = Date.now();
     if(window.waifuGlobals.model_p === 22){
-        loadlive2d('live2d', '/api/live2d-22.json?model=' + encodeURIComponent(modelName));
+        loadlive2d('live2d', '/api/live2d-22.json?model=' + encodeURIComponent(modelName) + '&_=' + cacheBuster);
     } else {
-        loadlive2d('live2d', '/api/live2d-33.json?model=' + encodeURIComponent(modelName));
+        loadlive2d('live2d', '/api/live2d-33.json?model=' + encodeURIComponent(modelName) + '&_=' + cacheBuster);
     }
     
     showMessage('我的新衣服好看嘛',4000);
