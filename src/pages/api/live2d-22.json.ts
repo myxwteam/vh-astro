@@ -40,27 +40,28 @@ export const GET: APIRoute = ({ url, request }) => {
   // 固定为 22娘
   const person = "22";
   
-  // 尝试多种方式获取 id 参数
-  let id_: string | null = null;
+  // 获取时间戳参数用作随机种子
+  let t_: string | null = null;
   try {
     const urlObj = new URL(request.url);
-    id_ = urlObj.searchParams.get('id');
+    t_ = urlObj.searchParams.get('t');
   } catch (e) {
     // 尝试从 URL 字符串解析
     const urlString = request.url || url.href;
-    const matchId = urlString.match(/[?&]id=([^&]*)/);
-    if (matchId) id_ = matchId[1];
+    const matchT = urlString.match(/[?&]t=([^&]*)/);
+    if (matchT) t_ = matchT[1];
   }
 
   const modelNames = Object.keys(modelList);
   let modelNum = modelNames.length;
   if (!R18) modelNum -= 1;
 
+  // 使用时间戳作为种子生成随机索引
   let id: number;
-  if (id_ && !isNaN(parseInt(id_))) {
-    id = parseInt(id_) % modelNum;
-  } else if (DEFAULT_ID !== null) {
-    id = DEFAULT_ID;
+  if (t_ && !isNaN(parseInt(t_))) {
+    // 使用时间戳生成伪随机数
+    const seed = parseInt(t_);
+    id = seed % modelNum;
   } else {
     id = Math.floor(Math.random() * modelNum);
   }
