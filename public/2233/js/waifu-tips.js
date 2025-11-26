@@ -1,7 +1,13 @@
 //初始位置，默认左上角，与下面的 目标位置 搭配修改
+// Prevent duplicate initialization
+if (window.waifuTipsInitialized) {
+    console.log("Waifu-tips already initialized, skipping...");
+} else {
+    window.waifuTipsInitialized = true;
+    
 $(".waifu").css({'top':0,'left':0});
 
-let waifu_display = localStorage.getItem('waifu-display');
+var waifu_display = localStorage.getItem('waifu-display');
 if(waifu_display=="none"){
     $('.waifu').hide();
     $('.waifu-btn').show()
@@ -302,3 +308,5 @@ jQuery(document).ready(function($){
         }
     }
 });
+
+} // End of waifuTipsInitialized check
