@@ -1,5 +1,8 @@
 import type { APIRoute } from 'astro';
 
+// 强制服务器端渲染，禁止预渲染
+export const prerender = false;
+
 // 模型列表配置
 const modelList: Record<string, (string | string[])[]> = {
   "default.v2": ["texture_01.png", "texture_02.png", "texture_03.png"],
@@ -72,6 +75,9 @@ export const GET: APIRoute = ({ url, request }) => {
     type: "Live2D Model Setting",
     name: `${person}-${modelName}`,
     label: person,
+    debug_timestamp: Date.now(),
+    debug_model_id: id,
+    debug_model_name: modelName,
     model: `${baseUrl}2233/model/${person}/${person}.v2.moc`,
     textures: [
       `${baseUrl}2233/model/${person}/texture_00.png`,
