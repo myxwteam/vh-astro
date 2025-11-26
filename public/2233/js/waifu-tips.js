@@ -1,10 +1,78 @@
 //初始位置，默认左上角，与下面的 目标位置 搭配修改
 // 初始化全局变量（仅初始化一次）
-if (typeof window.waifuGlobals === 'undefined') {
+if (!window.waifuGlobals) {
     window.waifuGlobals = {
-        model_p: 33,
+        model_p: 33,  // 初始是33娘
         m22_id: 0,
         m33_id: 0
+    };
+}
+
+// 衣服列表（和API中的modelList一致）
+const modelList = [
+    "default.v2",
+    "2016.xmas",
+    "2017.cba-normal",
+    "2017.cba-super",
+    "2017.summer.super",
+    "2017.newyear",
+    "2017.school",
+    "2017.summer.normal",
+    "2017.tomo-bukatsu.high",
+    "2017.valley",
+    "2017.vdays",
+    "2017.tomo-bukatsu.low",
+    "2018.bls-summer",
+    "2018.bls-winter",
+    "2018.lover",
+    "2018.spring",
+    "2019.deluxe",
+    "2019.summer",
+    "2019.bls",
+    "2020.newyear"
+];
+
+// 前端随机换衣服函数
+function getRandomModelConfig(person) {
+    const randomIndex = Math.floor(Math.random() * modelList.length);
+    const modelName = modelList[randomIndex];
+    const baseUrl = '../';
+    
+    return {
+        type: "Live2D Model Setting",
+        name: person + "-" + modelName,
+        label: person,
+        model: baseUrl + "2233/model/" + person + "/" + person + ".v2.moc",
+        textures: [
+            baseUrl + "2233/model/" + person + "/texture_00.png",
+            baseUrl + "2233/model/" + person + "/closet." + modelName + "/texture_01.png",
+            baseUrl + "2233/model/" + person + "/closet." + modelName + "/texture_02.png",
+            baseUrl + "2233/model/" + person + "/closet." + modelName + "/texture_03.png"
+        ],
+        hit_areas_custom: {
+            head_x: [-0.35, 0.6],
+            head_y: [0.19, -0.2],
+            body_x: [-0.3, -0.25],
+            body_y: [0.3, -0.9]
+        },
+        layout: {
+            center_x: -0.05,
+            center_y: 0.25,
+            height: 2.7
+        },
+        motions: {
+            idle: [
+                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.idle-01.mtn", fade_in: 2000, fade_out: 2000 },
+                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.idle-02.mtn", fade_in: 2000, fade_out: 2000 },
+                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.idle-03.mtn", fade_in: person === "22" ? 100 : 2000, fade_out: person === "22" ? 100 : 2000 }
+            ],
+            tap_body: [
+                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.touch.mtn", fade_in: person === "22" ? 500 : 150, fade_out: person === "22" ? 200 : 100 }
+            ],
+            thanking: [
+                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.thanking.mtn", fade_in: 2000, fade_out: 2000 }
+            ]
+        }
     };
 }
 
@@ -78,17 +146,21 @@ $('.waifu-tool .street-view').off('click').click(function (){
         showMessage('看板娘还没准备好呢~',2000);
         return;
     }
-    if(window.waifuGlobals.model_p===22){
-        window.waifuGlobals.m22_id += 1;
-        console.log('Waifu: 给22娘换衣服, id=', window.waifuGlobals.m22_id);
-        // 添加时间戳确保每次请求都是唯一的，API会重新随机选择衣服
-        loadlive2d('live2d','/api/live2d-22.json?t='+Date.now())
-    }else{
-        window.waifuGlobals.m33_id += 1;
-        console.log('Waifu: 给33娘换衣服, id=', window.waifuGlobals.m33_id);
-        // 添加时间戳确保每次请求都是唯一的，API会重新随机选择衣服
-        loadlive2d('live2d','/api/live2d-33.json?t='+Date.now())
-    }
+    
+    // 使用前端随机生成配置，绕过API缓存
+    const person = window.waifuGlobals.model_p === 22 ? "22" : "33";
+    const config = getRandomModelConfig(person);
+    console.log('Waifu: 换衣服到', config.name);
+    
+    // 创建临时JSON URL
+    const blob = new Blob([JSON.stringify(config)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    
+    loadlive2d('live2d', url);
+    
+    // 清理URL对象
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    
     showMessage('我的新衣服好看嘛',4000);
 });
 
