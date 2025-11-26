@@ -40,15 +40,19 @@ export const GET: APIRoute = ({ url, request }) => {
   // 固定为 22娘
   const person = "22";
   
-  // 获取时间戳参数用作随机种子
+  // 获取模型名称参数（优先）或时间戳参数
+  let modelName_: string | null = null;
   let t_: string | null = null;
   try {
     const urlObj = new URL(request.url);
+    modelName_ = urlObj.searchParams.get('model');
     t_ = urlObj.searchParams.get('t');
   } catch (e) {
     // 尝试从 URL 字符串解析
     const urlString = request.url || url.href;
+    const matchModel = urlString.match(/[?&]model=([^&]*)/);
     const matchT = urlString.match(/[?&]t=([^&]*)/);
+    if (matchModel) modelName_ = decodeURIComponent(matchModel[1]);
     if (matchT) t_ = matchT[1];
   }
 
@@ -56,17 +60,23 @@ export const GET: APIRoute = ({ url, request }) => {
   let modelNum = modelNames.length;
   if (!R18) modelNum -= 1;
 
-  // 使用时间戳作为种子生成随机索引
-  let id: number;
-  if (t_ && !isNaN(parseInt(t_))) {
-    // 使用时间戳生成伪随机数
+  let modelName: string;
+  let id: number = 0;
+  
+  // 如果指定了模型名称，使用指定的
+  if (modelName_ && modelNames.indexOf(modelName_) !== -1) {
+    modelName = modelName_;
+    id = modelNames.indexOf(modelName_);
+  } else if (t_ && !isNaN(parseInt(t_))) {
+    // 否则使用时间戳生成随机索引
     const seed = parseInt(t_);
     id = seed % modelNum;
+    modelName = modelNames[id];
   } else {
+    // 完全随机
     id = Math.floor(Math.random() * modelNum);
+    modelName = modelNames[id];
   }
-
-  const modelName = modelNames[id];
   const baseUrl = '../';
   
   const live2dConfig = {
