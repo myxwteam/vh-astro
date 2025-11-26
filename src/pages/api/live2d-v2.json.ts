@@ -64,6 +64,13 @@ export const GET: APIRoute = ({ url }) => {
 
   // 参数转化 - 完全按照PHP的三元运算符逻辑
   // $person_ == "22" || $person_ == "33" ? $person = $person_ : $person = ["22","33"][mt_rand(0,1)];
+  console.log('>>> 判断前: person_ =', person_);
+  console.log('>>> person_ === "22" =', person_ === "22");
+  console.log('>>> person_ === "33" =', person_ === "33");
+  console.log('>>> person_ == "22" =', person_ == "22");
+  console.log('>>> person_ == "33" =', person_ == "33");
+  console.log('>>> typeof person_ =', typeof person_);
+  
   const person = (person_ === "22" || person_ === "33") 
     ? person_ 
     : ["22", "33"][Math.floor(Math.random() * 2)];
@@ -81,6 +88,16 @@ export const GET: APIRoute = ({ url }) => {
     name: `${person}-${modelName}`,
     label: person,
     timestamp: Date.now(),
+    debug: {
+      person_param: person_,
+      person_param_type: typeof person_,
+      person_equals_22: person_ === "22",
+      person_equals_33: person_ === "33",
+      final_person: person,
+      id_param: id_,
+      final_id: id,
+      model_name: modelName
+    },
     model: `${baseUrl}2233/model/${person}/${person}.v2.moc`,
     textures: [
       `${baseUrl}2233/model/${person}/texture_00.png`,
