@@ -133,9 +133,12 @@ export const GET: APIRoute = ({ url, request }) => {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      'CDN-Cache-Control': 'no-store',
+      'Cloudflare-CDN-Cache-Control': 'no-store',
       'Pragma': 'no-cache',
-      'Expires': '0'
+      'Expires': '0',
+      'Vary': '*'
     }
   });
 };
