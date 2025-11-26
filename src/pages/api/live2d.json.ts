@@ -44,6 +44,12 @@ export const GET: APIRoute = ({ url }) => {
   const personParam = params.get('p');
   const idParam = params.get('id');
 
+  // 调试日志
+  console.log('=== Live2D API 调试 ===');
+  console.log('请求URL:', url.href);
+  console.log('personParam:', personParam);
+  console.log('idParam:', idParam);
+
   // 模型名称数组
   const modelNames = Object.keys(modelList);
   let modelNum = modelNames.length;
@@ -67,8 +73,13 @@ export const GET: APIRoute = ({ url }) => {
     person = Math.random() > 0.5 ? "22" : "33";
   }
 
+  console.log('最终 person:', person);
+  console.log('最终 id:', id);
+
   // 获取模型名称
   const modelName = modelNames[id];
+  console.log('modelName:', modelName);
+  console.log('=======================');
 
   // 生成Live2D配置（使用相对于/api/目录的路径）
   const baseUrl = '../';  // 从 /api/ 返回到根目录
