@@ -32,51 +32,6 @@ const modelList = [
     "2020.newyear"
 ];
 
-// 前端随机换衣服函数
-function getRandomModelConfig(person) {
-    const randomIndex = Math.floor(Math.random() * modelList.length);
-    const modelName = modelList[randomIndex];
-    // 使用根相对路径（相对于域名根目录）
-    const baseUrl = '/';
-    
-    return {
-        type: "Live2D Model Setting",
-        name: person + "-" + modelName,
-        label: person,
-        model: baseUrl + "2233/model/" + person + "/" + person + ".v2.moc",
-        textures: [
-            baseUrl + "2233/model/" + person + "/texture_00.png",
-            baseUrl + "2233/model/" + person + "/closet." + modelName + "/texture_01.png",
-            baseUrl + "2233/model/" + person + "/closet." + modelName + "/texture_02.png",
-            baseUrl + "2233/model/" + person + "/closet." + modelName + "/texture_03.png"
-        ],
-        hit_areas_custom: {
-            head_x: [-0.35, 0.6],
-            head_y: [0.19, -0.2],
-            body_x: [-0.3, -0.25],
-            body_y: [0.3, -0.9]
-        },
-        layout: {
-            center_x: -0.05,
-            center_y: 0.25,
-            height: 2.7
-        },
-        motions: {
-            idle: [
-                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.idle-01.mtn", fade_in: 2000, fade_out: 2000 },
-                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.idle-02.mtn", fade_in: 2000, fade_out: 2000 },
-                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.idle-03.mtn", fade_in: person === "22" ? 100 : 2000, fade_out: person === "22" ? 100 : 2000 }
-            ],
-            tap_body: [
-                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.touch.mtn", fade_in: person === "22" ? 500 : 150, fade_out: person === "22" ? 200 : 100 }
-            ],
-            thanking: [
-                { file: baseUrl + "2233/model/" + person + "/" + person + ".v2.thanking.mtn", fade_in: 2000, fade_out: 2000 }
-            ]
-        }
-    };
-}
-
 $(".waifu").css({'top':0,'left':0});
 
 var waifu_display = localStorage.getItem('waifu-display');
@@ -148,15 +103,17 @@ $('.waifu-tool .street-view').off('click').click(function (){
         return;
     }
     
-    // 使用前端随机生成配置，绕过API缓存
-    const person = window.waifuGlobals.model_p === 22 ? "22" : "33";
-    const config = getRandomModelConfig(person);
-    console.log('Waifu: 换衣服到', config.name);
+    // 前端随机选择一套衣服
+    const randomIndex = Math.floor(Math.random() * modelList.length);
+    const modelName = modelList[randomIndex];
+    console.log('Waifu: 换衣服到', modelName);
     
-    // 使用 Data URL（相对路径基于当前页面，不是JSON）
-    const dataUrl = 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(JSON.stringify(config))));
-    
-    loadlive2d('live2d', dataUrl);
+    // 使用model参数调用API
+    if(window.waifuGlobals.model_p === 22){
+        loadlive2d('live2d', '/api/live2d-22.json?model=' + encodeURIComponent(modelName));
+    } else {
+        loadlive2d('live2d', '/api/live2d-33.json?model=' + encodeURIComponent(modelName));
+    }
     
     showMessage('我的新衣服好看嘛',4000);
 });
