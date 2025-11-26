@@ -60,13 +60,13 @@ $('.waifu-tool .drivers-license-o').off('click').click(function(){
     if(window.waifuGlobals.model_p===33){
         // 当前是33娘，切换到22娘
         console.log('Waifu: 从33娘切换到22娘');
-        loadlive2d('live2d','/api/live2d-v2.json?p=22&id='+window.waifuGlobals.m22_id);
+        loadlive2d('live2d','/api/live2d-22.json?id='+window.waifuGlobals.m22_id);
         window.waifuGlobals.model_p = 22;
         showMessage('33援交有点累了，现在该我上场了',4000) // 22娘说的话
     }else{
         // 当前是22娘，切换到33娘
         console.log('Waifu: 从22娘切换到33娘');
-        loadlive2d('live2d','/api/live2d-v2.json?p=33&id='+window.waifuGlobals.m33_id);
+        loadlive2d('live2d','/api/live2d-33.json?id='+window.waifuGlobals.m33_id);
         window.waifuGlobals.model_p = 33;
         showMessage('我又回来了！',4000) // 33娘说的话
     }
@@ -81,11 +81,11 @@ $('.waifu-tool .street-view').off('click').click(function (){
     if(window.waifuGlobals.model_p===22){
         window.waifuGlobals.m22_id += 1;
         console.log('Waifu: 给22娘换衣服, id=', window.waifuGlobals.m22_id);
-        loadlive2d('live2d','/api/live2d-v2.json?p=22&id='+window.waifuGlobals.m22_id)
+        loadlive2d('live2d','/api/live2d-22.json?id='+window.waifuGlobals.m22_id)
     }else{
         window.waifuGlobals.m33_id += 1;
         console.log('Waifu: 给33娘换衣服, id=', window.waifuGlobals.m33_id);
-        loadlive2d('live2d','/api/live2d-v2.json?p=33&id='+window.waifuGlobals.m33_id)
+        loadlive2d('live2d','/api/live2d-33.json?id='+window.waifuGlobals.m33_id)
     }
     showMessage('我的新衣服好看嘛',4000);
 });
@@ -96,7 +96,7 @@ $('.waifu-tool .street-view').off('click').click(function (){
         console.log('Waifu: 初始化33娘模型');
         console.log('Waifu: loadlive2d函数类型=', typeof loadlive2d);
         try {
-            loadlive2d('live2d','/api/live2d-v2.json?p=33');
+            loadlive2d('live2d','/api/live2d-33.json');
             console.log('Waifu: 初始化调用成功');
         } catch (error) {
             console.error('Waifu: 初始化调用失败', error);
