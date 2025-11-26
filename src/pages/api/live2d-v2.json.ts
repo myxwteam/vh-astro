@@ -68,15 +68,17 @@ export const GET: APIRoute = ({ url }) => {
   console.log('personParam === "22":', personParam === "22");
   console.log('personParam === "33":', personParam === "33");
   
-  if (personParam === "22") {
+  // 强制字符串比较
+  if (String(personParam) === "22") {
     person = "22";
     console.log('选择了22娘');
-  } else if (personParam === "33") {
+  } else if (String(personParam) === "33") {
     person = "33";
     console.log('选择了33娘');
   } else {
-    person = "33"; // 默认33娘
-    console.log('使用默认33娘');
+    // 如果没有参数，根据随机数决定
+    person = Math.random() > 0.5 ? "22" : "33";
+    console.log('使用随机选择:', person);
   }
 
   console.log('最终 person:', person);
