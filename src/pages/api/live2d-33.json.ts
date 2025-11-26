@@ -1,8 +1,5 @@
 import type { APIRoute } from 'astro';
 
-// 强制服务器端渲染，禁止预渲染
-export const prerender = false;
-
 // 模型列表配置
 const modelList: Record<string, (string | string[])[]> = {
   "default.v2": ["texture_01.png", "texture_02.png", "texture_03.png"],
