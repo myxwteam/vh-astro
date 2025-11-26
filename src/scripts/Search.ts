@@ -31,7 +31,10 @@ const findAndModifyElements = (arr: any[], keyword: string) => {
 let searchHTML = '';
 const renderSearch = (arr: any[]) => {
   searchHTML = !arr.length ? '<em></em>' : arr.map(i => `<a class="vh-search-item" href="${i.url}"><span class="vh-ellipsis">${i.title}</span><p class="vh-ellipsis line-3">${i.content}</p></a>`).join('');
-  document.querySelector('.vh-header>.main>.vh-search>main>.vh-search-list')!.innerHTML = searchHTML;
+  const searchListElement = document.querySelector('.vh-header>.main>.vh-search>main>.vh-search-list');
+  if (searchListElement) {
+    searchListElement.innerHTML = searchHTML;
+  }
 }
 
 // 截流
@@ -47,9 +50,22 @@ const vhSearchInit = () => {
   const searchDOM: any = document.querySelector(".vh-header>.main>nav>span.search-btn");
   const searchMainDOM: any = document.querySelector(".vh-header>.main>.vh-search>main");
   const searchListDOM: any = document.querySelector(".vh-header>.main>.vh-search");
+  
+  // Guard clause: if essential elements don't exist, exit early
+  if (!searchDOM || !searchMainDOM || !searchListDOM) {
+    console.warn("Search elements not found, skipping search initialization");
+    return;
+  }
+  
+  const searchInput = searchListDOM.querySelector(".search-input>input");
+  if (!searchInput) {
+    console.warn("Search input not found");
+    return;
+  }
+  
   const addActive = () => setTimeout(() => {
     searchListDOM.classList.add("active");
-    searchListDOM.querySelector(".search-input>input").focus();
+    searchInput.focus();
   });
   const removeActive = () => setTimeout(() => searchListDOM.classList.remove("active"));
   // 禁止默认事件
@@ -57,7 +73,7 @@ const vhSearchInit = () => {
   searchDOM.addEventListener("click", addActive);
   searchListDOM.addEventListener("click", removeActive);
   // 搜索框初内容变化
-  searchListDOM.querySelector(".search-input>input").addEventListener("input", searchInputChange);
+  searchInput.addEventListener("input", searchInputChange);
 };
 
 export { searchFn, searchInputChange, vhSearchInit };
