@@ -50,6 +50,39 @@ import "./Layout.less";
     <!-- 彩旗🎈 -->
     <script is:inline src="/assets/js/vhCaiqi.js" defer></script>
 
+    <!-- 设置主题颜色 -->
+    <Fragment
+      set:html={`<style>:root {${Object.entries(Theme)
+        .map(([key, value]) => `${key}:${value};`)
+        .join(
+          ""
+        )}--vh-main-header-height:${Home ? HomeBanner.HomeHeight : HomeBanner.PageHeight};--vh-home-banner:${HomeBanner.background}}</style>`}
+    />
+  </Head>
+  <body>
+    <!-- Live2D 看板娘 -->
+    <Live2D />
+    <MobileSidebar />
+    <Header activeNav={activeNav} />
+    <main class="main">
+      {HomeBanner.enable && <MainHeader />}
+      <section
+        class="main-inner"
+        style={`padding-top:${HomeBanner.enable ? "0.88rem" : "calc(66px + 0.68rem)"}`}
+      >
+        <section class="main-inner-content">
+          <slot />
+        </section>
+        <Aside />
+      </section>
+      <BackTop />
+    </main>
+    <Footer />
+    <script>
+      import InitFn from "@/scripts/Init";
+      // 全局初始化
+      InitFn();
+    </script>
     <!-- Live2D 脚本加载 -->
     <script is:inline>
       window.live2dInitialized = false;
@@ -134,40 +167,6 @@ import "./Layout.less";
           initLive2D();
         }
       }, 2000);
-    </script>
-
-    <!-- 设置主题颜色 -->
-    <Fragment
-      set:html={`<style>:root {${Object.entries(Theme)
-        .map(([key, value]) => `${key}:${value};`)
-        .join(
-          ""
-        )}--vh-main-header-height:${Home ? HomeBanner.HomeHeight : HomeBanner.PageHeight};--vh-home-banner:${HomeBanner.background}}</style>`}
-    />
-  </Head>
-  <body>
-    <!-- Live2D 看板娘 -->
-    <Live2D />
-    <MobileSidebar />
-    <Header activeNav={activeNav} />
-    <main class="main">
-      {HomeBanner.enable && <MainHeader />}
-      <section
-        class="main-inner"
-        style={`padding-top:${HomeBanner.enable ? "0.88rem" : "calc(66px + 0.68rem)"}`}
-      >
-        <section class="main-inner-content">
-          <slot />
-        </section>
-        <Aside />
-      </section>
-      <BackTop />
-    </main>
-    <Footer />
-    <script>
-      import InitFn from "@/scripts/Init";
-      // 全局初始化
-      InitFn();
     </script>
   </body>
 </html>
