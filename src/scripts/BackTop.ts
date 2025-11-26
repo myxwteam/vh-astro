@@ -1,6 +1,7 @@
 
 // 滚动条高度变化事件======
 const scrollChangeFn = () => {
+  if (!backTop || !circle) return; // Guard clause
   const scrollHeight = document.documentElement.scrollHeight;
   const clientHeight = window.innerHeight;
   const percentage = (window.scrollY / (scrollHeight - clientHeight)) * 100;
@@ -30,6 +31,13 @@ export default () => {
   circle = document.querySelector(".vh-back-top>svg>circle");
   // 更新 回顶部DOM
   backTop = document.querySelector(".vh-back-top");
+  
+  // Guard clause: if elements don't exist, exit early
+  if (!backTop || !circle) {
+    console.warn("BackTop elements not found, skipping initialization");
+    return;
+  }
+  
   // BackTop 圈圈初始化
   circle.style.strokeDasharray = circumference;
   circle.style.strokeDashoffset = circumference;
