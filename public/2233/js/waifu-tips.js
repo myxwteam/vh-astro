@@ -1,10 +1,13 @@
 //初始位置，默认左上角，与下面的 目标位置 搭配修改
-// Prevent duplicate initialization
-if (window.waifuTipsInitialized) {
-    console.log("Waifu-tips already initialized, skipping...");
-} else {
-    window.waifuTipsInitialized = true;
-    
+// 初始化全局变量（仅初始化一次）
+if (typeof window.waifuGlobals === 'undefined') {
+    window.waifuGlobals = {
+        model_p: 33,
+        m22_id: 0,
+        m33_id: 0
+    };
+}
+
 $(".waifu").css({'top':0,'left':0});
 
 var waifu_display = localStorage.getItem('waifu-display');
@@ -12,13 +15,13 @@ if(waifu_display=="none"){
     $('.waifu').hide();
     $('.waifu-btn').show()
 }
-$('.waifu-btn').click(function(){
+$('.waifu-btn').off('click').click(function(){
     localStorage.removeItem('waifu-display');
     $('.waifu').show();
     $('.waifu-btn').hide();
     showMessage('你的小可爱突然出现~',4000)
 });
-$('.waifu-tool .home').click(function(){
+$('.waifu-tool .home').off('click').click(function(){
     try{
         if(typeof(ajax)==="function"){
             ajax(window.location.protocol+'//'+window.location.hostname+'/',"pagelink")
@@ -27,41 +30,46 @@ $('.waifu-tool .home').click(function(){
         }
     }catch(e){}
 });
-$('.waifu-tool .comments').click(function(){
+$('.waifu-tool .comments').off('click').click(function(){
     showHitokoto()
 });
-$('.waifu-tool .info-circle').click(function(){
+$('.waifu-tool .info-circle').off('click').click(function(){
     window.open('https://moedog.org/946.html')
 });
-$('.waifu-tool .camera').click(function(){
+$('.waifu-tool .camera').off('click').click(function(){
     showMessage('照好了嘛，是不是很可爱呢？',5000);
-    window.Live2D.captureName = model_p+'.png';
+    window.Live2D.captureName = window.waifuGlobals.model_p+'.png';
     window.Live2D.captureFrame = true
 });
-$('.waifu-tool .close').click(function(){
+$('.waifu-tool .close').off('click').click(function(){
     localStorage.setItem('waifu-display','none');
     showMessage('愿你有一天能与重要的人重逢',2000);
     window.setTimeout(function(){$('.waifu').hide();$('.waifu-btn').show()},1000)
 });
-var model_p = 22,m22_id = m33_id = 0;
-$('.waifu-tool .drivers-license-o').click(function(){
-    if(model_p===22){
-        loadlive2d('live2d','/api/live2d.json?p=22&id='+m22_id);
-        model_p = 33;
-        showMessage('33援交有点累了，现在该我上场了',4000)
+// 使用全局变量
+var model_p = window.waifuGlobals.model_p;
+var m22_id = window.waifuGlobals.m22_id;
+var m33_id = window.waifuGlobals.m33_id;
+$('.waifu-tool .drivers-license-o').off('click').click(function(){
+    if(window.waifuGlobals.model_p===33){
+        // 当前是33娘，切换到22娘
+        loadlive2d('live2d','/api/live2d.json?p=22&id='+window.waifuGlobals.m22_id);
+        window.waifuGlobals.model_p = 22;
+        showMessage('33援交有点累了，现在该我上场了',4000) // 22娘说的话
     }else{
-        loadlive2d('live2d','/api/live2d.json?p=33&id='+m33_id);
-        model_p = 22;
-        showMessage('我又回来了！',4000)
+        // 当前是22娘，切换到33娘
+        loadlive2d('live2d','/api/live2d.json?p=33&id='+window.waifuGlobals.m33_id);
+        window.waifuGlobals.model_p = 33;
+        showMessage('我又回来了！',4000) // 33娘说的话
     }
 });
-$('.waifu-tool .street-view').click(function (){
-    if(model_p===22){
-        m33_id += 1;
-        loadlive2d('live2d','/api/live2d.json?p=33&id='+m33_id)
+$('.waifu-tool .street-view').off('click').click(function (){
+    if(window.waifuGlobals.model_p===22){
+        window.waifuGlobals.m22_id += 1;
+        loadlive2d('live2d','/api/live2d.json?p=22&id='+window.waifuGlobals.m22_id)
     }else{
-        m22_id += 1;
-        loadlive2d('live2d','/api/live2d.json?p=22&id='+m22_id)
+        window.waifuGlobals.m33_id += 1;
+        loadlive2d('live2d','/api/live2d.json?p=33&id='+window.waifuGlobals.m33_id)
     }
     showMessage('我的新衣服好看嘛',4000);
 });
@@ -69,7 +77,7 @@ loadlive2d('live2d','/api/live2d.json?p=33');
 $(document).on('copy',function(){
     showMessage('你都复制了些什么呀，转载要记得加上出处哦',8000)
 });
-$(window).resize(function(){
+$(window).off('resize').resize(function(){
     $(".waifu").css('top',window.innerHeight-250)
 });
 function showHitokoto(){
@@ -168,26 +176,26 @@ jQuery(document).ready(function($){
     $('.gotop-box').mouseover(function(){
         showMessage('要回到开始的地方么？')
     });
-    $('.waifu-tool .comments').mouseover(function(){
+    $('.waifu-tool .comments').off('mouseover').mouseover(function(){
         showMessage('猜猜我要说些什么？')
     });
-    $('.waifu-tool .drivers-license-o').mouseover(function(){
-        if(model_p===22){
-            showMessage('要见见我的姐姐嘛')
+    $('.waifu-tool .drivers-license-o').off('mouseover').mouseover(function(){
+        if(window.waifuGlobals.model_p===33){
+            showMessage('要见见我的姐姐嘛') // 当前33，即将切换到22
         }else{
-            showMessage('什么？我的服务不好，要33回来？')
+            showMessage('什么？我的服务不好，要33回来？') // 当前22，即将切换到33
         }
     });
-    $('.waifu-tool .street-view').mouseover(function(){
+    $('.waifu-tool .street-view').off('mouseover').mouseover(function(){
         showMessage('喜欢换装play吗？')
     });
-    $('.waifu-tool .camera').mouseover(function(){
+    $('.waifu-tool .camera').off('mouseover').mouseover(function(){
         showMessage('你要给我拍照呀？一二三～茄子～')
     });
-    $('.waifu-tool .info-circle').mouseover(function(){
+    $('.waifu-tool .info-circle').off('mouseover').mouseover(function(){
         showMessage('想知道更多关于我的事么？')
     });
-    $('.waifu-tool .close').mouseover(function(){
+    $('.waifu-tool .close').off('mouseover').mouseover(function(){
         showMessage('到了要说再见的时候了吗')
     });
     $(document).on("click","h2 a",function(){
@@ -195,6 +203,13 @@ jQuery(document).ready(function($){
     });
     $(document).on("mouseover","h2 a",function(){
         showMessage('要看看<span style="color:#0099cc;">'+$(this).text()+'</span>么？')
+    });
+    // 文章卡片链接悬停提示
+    $(document).on("mouseover","h1.title a",function(){
+        showMessage('要看看<span style="color:#0099cc;">'+$(this).text()+'</span>吗？')
+    });
+    $(document).on("click","h1.title a",function(){
+        showMessage('加载<span style="color:#0099cc;">'+$(this).text()+'</span>中...请稍候',600)
     });
     $(document).on("mouseover",".prev",function(){
         showMessage('要翻到上一页吗?')
@@ -308,5 +323,3 @@ jQuery(document).ready(function($){
         }
     }
 });
-
-} // End of waifuTipsInitialized check
