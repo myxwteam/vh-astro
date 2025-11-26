@@ -1,5 +1,5 @@
 {
-  "name": "vh-astro",
+  "name": "vhastro",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -12,6 +12,7 @@
     "ondev": "astro preferences enable devToolbar"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.1.1",
     "@astrojs/mdx": "^4.3.6",
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.6.0",
