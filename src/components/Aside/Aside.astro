@@ -25,6 +25,8 @@ const CountInfo = getCountInfo();
 const recommendArticles = getRecommendArticles();
 // Google 广告组件
 import GoogleAd from "@/components/GoogleAd/GoogleAd.astro";
+// 访客签名组件
+import SignImage from "@/components/SignImage.astro";
 // 侧边栏样式
 import "./Aside.less";
 ---
@@ -73,6 +75,9 @@ import "./Aside.less";
       </section>
     )
   }
+
+  <!-- 访客签名块 -->
+  <SignImage />
 
   <!-- 公告块 -->
   {
