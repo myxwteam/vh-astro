@@ -107,12 +107,55 @@
 <!-- 加载 Live2D CSS -->
 <link rel="stylesheet" href="/2233/css/waifu.min.css" />
 
-<!-- 加载 Live2D JavaScript (在页面底部加载) -->
-<script
-  is:inline
-  src="https://cdn.jsdelivr.net/npm/jquery@2.1.4/dist/jquery.min.js"></script>
-<script
-  is:inline
-  src="https://cdn.jsdelivr.net/gh/xb2016/kratos-pjax@0.3.6/static/js/live2d.js"
-></script>
-<script is:inline src="/2233/js/waifu-tips.js"></script>
+<!-- 加载 Live2D JavaScript -->
+<script is:inline>
+  (function () {
+    console.log("Live2D: 开始加载...");
+
+    // 加载jQuery
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Failed to load ${src}`));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function initLive2D() {
+      try {
+        // 1. 加载jQuery
+        if (typeof jQuery === "undefined") {
+          console.log("Live2D: 加载jQuery...");
+          await loadScript(
+            "https://cdn.jsdelivr.net/npm/jquery@2.1.4/dist/jquery.min.js"
+          );
+        }
+
+        // 2. 加载Live2D核心库
+        if (typeof loadlive2d === "undefined") {
+          console.log("Live2D: 加载Live2D核心库...");
+          await loadScript(
+            "https://cdn.jsdelivr.net/gh/xb2016/kratos-pjax@0.3.6/static/js/live2d.js"
+          );
+        }
+
+        // 3. 加载waifu-tips
+        console.log("Live2D: 加载waifu-tips...");
+        await loadScript("/2233/js/waifu-tips.js");
+
+        console.log("Live2D: 全部加载完成！");
+      } catch (error) {
+        console.error("Live2D加载失败:", error);
+      }
+    }
+
+    // 等待DOM加载完成后初始化
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initLive2D);
+    } else {
+      initLive2D();
+    }
+  })();
+</script>
