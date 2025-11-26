@@ -107,15 +107,37 @@ $('.waifu-tool .street-view').off('click').click(function (){
     // 前端随机选择一套衣服
     const randomIndex = Math.floor(Math.random() * modelList.length);
     const modelName = modelList[randomIndex];
+    const person = window.waifuGlobals.model_p === 22 ? "22" : "33";
     console.log('Waifu: 换衣服到', modelName);
     
-    // 使用model参数调用API，并添加时间戳破坏缓存
-    const cacheBuster = Date.now();
-    if(window.waifuGlobals.model_p === 22){
-        loadlive2d('live2d', '/api/live2d-22.json?model=' + encodeURIComponent(modelName) + '&_=' + cacheBuster);
-    } else {
-        loadlive2d('live2d', '/api/live2d-33.json?model=' + encodeURIComponent(modelName) + '&_=' + cacheBuster);
-    }
+    // 通过AJAX获取API的基础配置
+    $.ajax({
+        url: '/api/live2d-' + person + '.json',
+        dataType: 'json',
+        cache: false,  // 禁用缓存
+        success: function(data) {
+            // 只替换衣服纹理路径
+            data.textures[1] = "../2233/model/" + person + "/closet." + modelName + "/texture_01.png";
+            data.textures[2] = "../2233/model/" + person + "/closet." + modelName + "/texture_02.png";
+            data.textures[3] = "../2233/model/" + person + "/closet." + modelName + "/texture_03.png";
+            data.name = person + "-" + modelName;
+            
+            console.log('Waifu: 生成新配置', data.name);
+            
+            // 创建Blob URL并加载
+            const newBlob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+            const newUrl = URL.createObjectURL(newBlob);
+            
+            loadlive2d('live2d', newUrl);
+            
+            // 清理URL对象
+            setTimeout(() => URL.revokeObjectURL(newUrl), 5000);
+        },
+        error: function() {
+            console.error('Waifu: 获取配置失败');
+            showMessage('换衣服失败了呢~', 2000);
+        }
+    });
     
     showMessage('我的新衣服好看嘛',4000);
 });
