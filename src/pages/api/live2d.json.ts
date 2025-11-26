@@ -70,17 +70,18 @@ export const GET: APIRoute = ({ url }) => {
   // 获取模型名称
   const modelName = modelNames[id];
 
-  // 生成Live2D配置
+  // 生成Live2D配置（使用相对于/api/目录的路径）
+  const baseUrl = '../';  // 从 /api/ 返回到根目录
   const live2dConfig = {
     type: "Live2D Model Setting",
     name: `${person}-${modelName}`,
     label: person,
-    model: `/2233/model/${person}/${person}.v2.moc`,
+    model: `${baseUrl}2233/model/${person}/${person}.v2.moc`,
     textures: [
-      `/2233/model/${person}/texture_00.png`,
-      `/2233/model/${person}/closet.${modelName}/${getTexture(modelName, 0)}`,
-      `/2233/model/${person}/closet.${modelName}/${getTexture(modelName, 1)}`,
-      `/2233/model/${person}/closet.${modelName}/${getTexture(modelName, 2)}`
+      `${baseUrl}2233/model/${person}/texture_00.png`,
+      `${baseUrl}2233/model/${person}/closet.${modelName}/${getTexture(modelName, 0)}`,
+      `${baseUrl}2233/model/${person}/closet.${modelName}/${getTexture(modelName, 1)}`,
+      `${baseUrl}2233/model/${person}/closet.${modelName}/${getTexture(modelName, 2)}`
     ],
     hit_areas_custom: {
       head_x: [-0.35, 0.6],
@@ -96,31 +97,31 @@ export const GET: APIRoute = ({ url }) => {
     motions: {
       idle: [
         {
-          file: `/2233/model/${person}/${person}.v2.idle-01.mtn`,
+          file: `${baseUrl}2233/model/${person}/${person}.v2.idle-01.mtn`,
           fade_in: 2000,
           fade_out: 2000
         },
         {
-          file: `/2233/model/${person}/${person}.v2.idle-02.mtn`,
+          file: `${baseUrl}2233/model/${person}/${person}.v2.idle-02.mtn`,
           fade_in: 2000,
           fade_out: 2000
         },
         {
-          file: `/2233/model/${person}/${person}.v2.idle-03.mtn`,
+          file: `${baseUrl}2233/model/${person}/${person}.v2.idle-03.mtn`,
           fade_in: person === "22" ? 100 : 2000,
           fade_out: person === "22" ? 100 : 2000
         }
       ],
       tap_body: [
         {
-          file: `/2233/model/${person}/${person}.v2.touch.mtn`,
+          file: `${baseUrl}2233/model/${person}/${person}.v2.touch.mtn`,
           fade_in: person === "22" ? 500 : 150,
           fade_out: person === "22" ? 200 : 100
         }
       ],
       thanking: [
         {
-          file: `/2233/model/${person}/${person}.v2.thanking.mtn`,
+          file: `${baseUrl}2233/model/${person}/${person}.v2.thanking.mtn`,
           fade_in: 2000,
           fade_out: 2000
         }
