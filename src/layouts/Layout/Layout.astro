@@ -120,28 +120,20 @@ import "./Layout.less";
         }
       }
 
-      // 多种方式确保初始化执行
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initLive2D);
-        // 兜底：3秒后如果还没初始化就强制执行
-        setTimeout(() => {
-          if (!window.live2dInitialized) {
-            console.log("Live2D: 触发兜底初始化");
-            initLive2D();
-          }
-        }, 3000);
-      } else {
-        // 页面已经加载完成，立即执行
+      // 强制延迟执行，不依赖任何事件（避免被Swup干扰）
+      console.log("Live2D: 设置延迟初始化（500ms）");
+      setTimeout(() => {
+        console.log("Live2D: 延迟时间到，执行初始化");
         initLive2D();
-      }
+      }, 500);
 
-      // 再加一个window.onload兜底
-      window.addEventListener("load", () => {
+      // 备用：如果500ms内DOM还没准备好，再等一会
+      setTimeout(() => {
         if (!window.live2dInitialized) {
-          console.log("Live2D: window.onload触发初始化");
+          console.log("Live2D: 备用初始化触发（2000ms）");
           initLive2D();
         }
-      });
+      }, 2000);
     </script>
 
     <!-- 设置主题颜色 -->
