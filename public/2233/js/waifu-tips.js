@@ -108,15 +108,39 @@ $('.waifu-tool .street-view').off('click').click(function (){
     if (window.waifuGlobals.model_p === 22) {
         // 当前是22娘，递增22娘的衣服ID
         window.waifuGlobals.m22_id += 1;
-        const apiUrl = '/api/live2d-22.json?t=' + window.waifuGlobals.m22_id + '&_=' + Date.now();
-        console.log('Waifu: 22娘换衣服 ID=' + window.waifuGlobals.m22_id, apiUrl);
-        loadlive2d('live2d', apiUrl);
+        const timestamp = Date.now();
+        const apiUrl = '/api/live2d-22.json?t=' + window.waifuGlobals.m22_id + '&_=' + timestamp;
+        console.log('========== 22娘换衣服 ==========');
+        console.log('Waifu: ID=' + window.waifuGlobals.m22_id);
+        console.log('Waifu: API URL=', apiUrl);
+        
+        // 先请求API查看返回内容
+        $.getJSON(apiUrl, function(data) {
+            console.log('Waifu: API返回配置', data);
+            console.log('Waifu: 模型名称=', data.name);
+            console.log('Waifu: debug_model_name=', data.debug_model_name);
+            console.log('Waifu: debug_model_id=', data.debug_model_id);
+            // 然后加载
+            loadlive2d('live2d', apiUrl);
+        });
     } else {
         // 当前是33娘，递增33娘的衣服ID
         window.waifuGlobals.m33_id += 1;
-        const apiUrl = '/api/live2d-33.json?t=' + window.waifuGlobals.m33_id + '&_=' + Date.now();
-        console.log('Waifu: 33娘换衣服 ID=' + window.waifuGlobals.m33_id, apiUrl);
-        loadlive2d('live2d', apiUrl);
+        const timestamp = Date.now();
+        const apiUrl = '/api/live2d-33.json?t=' + window.waifuGlobals.m33_id + '&_=' + timestamp;
+        console.log('========== 33娘换衣服 ==========');
+        console.log('Waifu: ID=' + window.waifuGlobals.m33_id);
+        console.log('Waifu: API URL=', apiUrl);
+        
+        // 先请求API查看返回内容
+        $.getJSON(apiUrl, function(data) {
+            console.log('Waifu: API返回配置', data);
+            console.log('Waifu: 模型名称=', data.name);
+            console.log('Waifu: debug_model_name=', data.debug_model_name);
+            console.log('Waifu: debug_model_id=', data.debug_model_id);
+            // 然后加载
+            loadlive2d('live2d', apiUrl);
+        });
     }
     
     showMessage('我的新衣服好看嘛',4000);
