@@ -1,7 +1,5 @@
 import type { APIRoute } from 'astro';
 
-export const prerender = false;
-
 // 模型列表配置
 const modelList: Record<string, (string | string[])[]> = {
   "default.v2": ["texture_01.png", "texture_02.png", "texture_03.png"],
@@ -35,6 +33,15 @@ function getTexture(modelName: string, textureIndex: number): string {
     return textures[Math.floor(Math.random() * textures.length)];
   }
   return textures;
+}
+
+export function getStaticPaths() {
+  // 生成0-19的路径（20个衣服配置）
+  const paths = [];
+  for (let i = 0; i < 20; i++) {
+    paths.push({ params: { id: String(i) } });
+  }
+  return paths;
 }
 
 export const GET: APIRoute = ({ params }) => {
