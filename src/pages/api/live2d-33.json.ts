@@ -78,6 +78,7 @@ export const GET: APIRoute = ({ url, request }) => {
     modelName = modelNames[id];
   }
   const baseUrl = '../';
+  const cacheBuster = '?v=' + Date.now(); // 添加时间戳避免缓存
   
   const live2dConfig = {
     type: "Live2D Model Setting",
@@ -86,12 +87,12 @@ export const GET: APIRoute = ({ url, request }) => {
     debug_timestamp: Date.now(),
     debug_model_id: id,
     debug_model_name: modelName,
-    model: `${baseUrl}2233/model/${person}/${person}.v2.moc`,
+    model: `${baseUrl}2233/model/${person}/${person}.v2.moc${cacheBuster}`,
     textures: [
-      `${baseUrl}2233/model/${person}/texture_00.png`,
-      `${baseUrl}2233/model/${person}/closet.${modelName}/${getTexture(modelName, 0)}`,
-      `${baseUrl}2233/model/${person}/closet.${modelName}/${getTexture(modelName, 1)}`,
-      `${baseUrl}2233/model/${person}/closet.${modelName}/${getTexture(modelName, 2)}`
+      `${baseUrl}2233/model/${person}/texture_00.png${cacheBuster}`,
+      `${baseUrl}2233/model/${person}/closet.${modelName}/${getTexture(modelName, 0)}${cacheBuster}`,
+      `${baseUrl}2233/model/${person}/closet.${modelName}/${getTexture(modelName, 1)}${cacheBuster}`,
+      `${baseUrl}2233/model/${person}/closet.${modelName}/${getTexture(modelName, 2)}${cacheBuster}`
     ],
     hit_areas_custom: {
       head_x: [-0.35, 0.6],
