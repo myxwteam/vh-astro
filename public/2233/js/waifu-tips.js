@@ -125,7 +125,9 @@ $('.waifu-tool .street-view').off('click').click(function (){
             const canvas = document.getElementById('live2d');
             if (canvas && canvas.getContext) {
                 const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (ctx) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
             }
             
             // 延迟加载确保清理完成
@@ -153,7 +155,9 @@ $('.waifu-tool .street-view').off('click').click(function (){
             const canvas = document.getElementById('live2d');
             if (canvas && canvas.getContext) {
                 const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (ctx) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
             }
             
             // 延迟加载确保清理完成
