@@ -109,7 +109,7 @@ $('.waifu-tool .street-view').off('click').click(function (){
     const idKey = person === 22 ? 'm22_id' : 'm33_id';
     
     window.waifuGlobals[idKey] += 1;
-    const apiUrl = '/api/live2d-' + person + '?t=' + window.waifuGlobals[idKey];
+    const apiUrl = '/api/live2d-' + person + '/' + window.waifuGlobals[idKey] + '.json';
     
     // 完全移除canvas元素
     const oldCanvas = document.getElementById('live2d');
