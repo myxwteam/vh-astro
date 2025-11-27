@@ -116,14 +116,25 @@ $('.waifu-tool .street-view').off('click').click(function (){
     const oldCanvas = document.getElementById('live2d');
     if (oldCanvas) {
         const parent = oldCanvas.parentNode;
-        parent.removeChild(oldCanvas);
         
-        // 创建全新的canvas
+        // 创建全新的canvas并复制样式
         const newCanvas = document.createElement('canvas');
         newCanvas.id = 'live2d';
         newCanvas.width = 280;
         newCanvas.height = 250;
-        parent.appendChild(newCanvas);
+        
+        // 复制原canvas的style属性
+        if (oldCanvas.style.cssText) {
+            newCanvas.style.cssText = oldCanvas.style.cssText;
+        }
+        
+        // 复制class属性
+        if (oldCanvas.className) {
+            newCanvas.className = oldCanvas.className;
+        }
+        
+        // 替换canvas
+        parent.replaceChild(newCanvas, oldCanvas);
         
         // 等待canvas插入DOM后再加载
         setTimeout(() => {
