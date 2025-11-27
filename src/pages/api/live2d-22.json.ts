@@ -41,20 +41,13 @@ export const GET: APIRoute = ({ url, request }) => {
   const person = "22";
   
   // 获取模型名称参数（优先）或时间戳参数
+  // 使用Astro提供的url参数，而不是request.url
   let modelName_: string | null = null;
   let t_: string | null = null;
-  try {
-    const urlObj = new URL(request.url);
-    modelName_ = urlObj.searchParams.get('model');
-    t_ = urlObj.searchParams.get('t');
-  } catch (e) {
-    // 尝试从 URL 字符串解析
-    const urlString = request.url || url.href;
-    const matchModel = urlString.match(/[?&]model=([^&]*)/);
-    const matchT = urlString.match(/[?&]t=([^&]*)/);
-    if (matchModel) modelName_ = decodeURIComponent(matchModel[1]);
-    if (matchT) t_ = matchT[1];
-  }
+  const debugUrl = url.href;
+  
+  modelName_ = url.searchParams.get('model');
+  t_ = url.searchParams.get('t');
 
   const modelNames = Object.keys(modelList);
   let modelNum = modelNames.length;
@@ -92,6 +85,7 @@ export const GET: APIRoute = ({ url, request }) => {
     debug_model_param: modelName_,
     debug_t_param: t_,
     debug_seed: t_ ? parseInt(t_) : null,
+    debug_url: debugUrl,
     model: `${baseUrl}2233/model/${person}/${person}.v2.moc${cacheBuster}`,
     textures: [
       `${baseUrl}2233/model/${person}/texture_00.png${cacheBuster}`,

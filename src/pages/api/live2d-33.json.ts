@@ -41,24 +41,13 @@ export const GET: APIRoute = ({ url, request }) => {
   const person = "33";
   
   // 获取模型名称参数（优先）或时间戳参数
+  // 使用Astro提供的url参数，而不是request.url
   let modelName_: string | null = null;
   let t_: string | null = null;
-  let debugUrl = '';
+  const debugUrl = url.href;
   
-  try {
-    const urlObj = new URL(request.url);
-    debugUrl = urlObj.href;
-    modelName_ = urlObj.searchParams.get('model');
-    t_ = urlObj.searchParams.get('t');
-  } catch (e) {
-    // 尝试从 URL 字符串解析
-    const urlString = request.url || url.href;
-    debugUrl = urlString;
-    const matchModel = urlString.match(/[?&]model=([^&]*)/);
-    const matchT = urlString.match(/[?&]t=([^&]*)/);
-    if (matchModel) modelName_ = decodeURIComponent(matchModel[1]);
-    if (matchT) t_ = matchT[1];
-  }
+  modelName_ = url.searchParams.get('model');
+  t_ = url.searchParams.get('t');
 
   const modelNames = Object.keys(modelList);
   let modelNum = modelNames.length;
