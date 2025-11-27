@@ -105,45 +105,71 @@ $('.waifu-tool .street-view').off('click').click(function (){
     }
     
     // 使用原始的递增ID方式换衣服（更可靠）
-    if (window.waifuGlobals.model_p === 22) {
-        // 当前是22娘，递增22娘的衣服ID
-        window.waifuGlobals.m22_id += 1;
-        const timestamp = Date.now();
-        const apiUrl = '/api/live2d-22.json?t=' + window.waifuGlobals.m22_id + '&_=' + timestamp;
-        
-        // 强制重新加载：先清空canvas，再加载
-        const canvas = document.getElementById('live2d');
-        if (canvas) {
-            // 清空canvas内容
-            const parent = canvas.parentNode;
-            const newCanvas = canvas.cloneNode(false);
-            parent.replaceChild(newCanvas, canvas);
+    const person = window.waifuGlobals.model_p === 22 ? 22 : 33;
+    const idKey = person === 22 ? 'm22_id' : 'm33_id';
+    
+    window.waifuGlobals[idKey] += 1;
+    const timestamp = Date.now();
+    const apiUrl = '/api/live2d-' + person + '.json?t=' + window.waifuGlobals[idKey] + '&_=' + timestamp;
+    
+    // 先获取配置，修改纹理URL时间戳，再加载
+    $.ajax({
+        url: apiUrl,
+        dataType: 'json',
+        cache: false,
+        success: function(config) {
+            // 给所有资源URL添加客户端时间戳
+            const clientTimestamp = Date.now();
+            
+            // 修改model URL
+            if (config.model) {
+                config.model = config.model.replace(/\?v=\d+/, '') + '?v=' + clientTimestamp;
+            }
+            
+            // 修改所有texture URL
+            if (config.textures && Array.isArray(config.textures)) {
+                config.textures = config.textures.map(url => {
+                    return url.replace(/\?v=\d+/, '') + '?v=' + clientTimestamp;
+                });
+            }
+            
+            // 修改所有motion URL
+            if (config.motions) {
+                for (let motionType in config.motions) {
+                    if (Array.isArray(config.motions[motionType])) {
+                        config.motions[motionType].forEach(motion => {
+                            if (motion.file) {
+                                motion.file = motion.file.replace(/\?v=\d+/, '') + '?v=' + clientTimestamp;
+                            }
+                        });
+                    }
+                }
+            }
+            
+            // 创建Blob URL
+            const configJson = JSON.stringify(config);
+            const blob = new Blob([configJson], {type: 'application/json'});
+            const blobUrl = URL.createObjectURL(blob);
+            
+            // 替换canvas
+            const canvas = document.getElementById('live2d');
+            if (canvas) {
+                const parent = canvas.parentNode;
+                const newCanvas = canvas.cloneNode(false);
+                parent.replaceChild(newCanvas, canvas);
+            }
+            
+            // 加载新配置
+            setTimeout(() => {
+                loadlive2d('live2d', blobUrl);
+                // 清理Blob URL
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 3000);
+            }, 100);
+        },
+        error: function(xhr, status, error) {
+            showMessage('换衣服失败了呢~', 2000);
         }
-        
-        // 延迟加载，确保canvas已被替换
-        setTimeout(() => {
-            loadlive2d('live2d', apiUrl);
-        }, 100);
-    } else {
-        // 当前是33娘，递增33娘的衣服ID
-        window.waifuGlobals.m33_id += 1;
-        const timestamp = Date.now();
-        const apiUrl = '/api/live2d-33.json?t=' + window.waifuGlobals.m33_id + '&_=' + timestamp;
-        
-        // 强制重新加载：先清空canvas，再加载
-        const canvas = document.getElementById('live2d');
-        if (canvas) {
-            // 清空canvas内容
-            const parent = canvas.parentNode;
-            const newCanvas = canvas.cloneNode(false);
-            parent.replaceChild(newCanvas, canvas);
-        }
-        
-        // 延迟加载，确保canvas已被替换
-        setTimeout(() => {
-            loadlive2d('live2d', apiUrl);
-        }, 100);
-    }
+    });
     
     showMessage('我的新衣服好看嘛',4000);
 });
