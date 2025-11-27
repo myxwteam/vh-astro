@@ -120,8 +120,18 @@ $('.waifu-tool .street-view').off('click').click(function (){
             console.log('Waifu: 模型名称=', data.name);
             console.log('Waifu: debug_model_name=', data.debug_model_name);
             console.log('Waifu: debug_model_id=', data.debug_model_id);
-            // 然后加载
-            loadlive2d('live2d', apiUrl);
+            
+            // 强制重新加载：清空canvas
+            const canvas = document.getElementById('live2d');
+            if (canvas && canvas.getContext) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // 延迟加载确保清理完成
+            setTimeout(() => {
+                loadlive2d('live2d', apiUrl);
+            }, 50);
         });
     } else {
         // 当前是33娘，递增33娘的衣服ID
@@ -138,8 +148,18 @@ $('.waifu-tool .street-view').off('click').click(function (){
             console.log('Waifu: 模型名称=', data.name);
             console.log('Waifu: debug_model_name=', data.debug_model_name);
             console.log('Waifu: debug_model_id=', data.debug_model_id);
-            // 然后加载
-            loadlive2d('live2d', apiUrl);
+            
+            // 强制重新加载：清空canvas
+            const canvas = document.getElementById('live2d');
+            if (canvas && canvas.getContext) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // 延迟加载确保清理完成
+            setTimeout(() => {
+                loadlive2d('live2d', apiUrl);
+            }, 50);
         });
     }
     
