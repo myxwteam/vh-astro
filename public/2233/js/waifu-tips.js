@@ -104,88 +104,20 @@ $('.waifu-tool .street-view').off('click').click(function (){
         return;
     }
     
-    // 前端随机选择一套衣服
-    const randomIndex = Math.floor(Math.random() * modelList.length);
-    const modelName = modelList[randomIndex];
-    const person = window.waifuGlobals.model_p === 22 ? "22" : "33";
-    console.log('Waifu: 换衣服到', modelName);
-    
-    // 通过AJAX获取当前人物的基础配置
-    $.ajax({
-        url: '/api/live2d-' + person + '.json?_=' + Date.now(),
-        dataType: 'json',
-        cache: false,
-        success: function(data) {
-            console.log('Waifu: 获取到配置', data);
-            console.log('Waifu: 原始textures', JSON.stringify(data.textures));
-            
-            // 使用绝对路径（从网站根目录开始）替换衣服纹理
-            const baseUrl = window.location.origin + "/2233/model/" + person + "/closet." + modelName + "/";
-            
-            // 构建新的纹理绝对路径
-            const newTexture1 = baseUrl + "texture_01.png";
-            const newTexture2 = baseUrl + "texture_02.png";
-            // 处理texture_03的两种情况：有些是texture_03.png，有些是texture_03_1.png
-            let newTexture3 = baseUrl + "texture_03.png";
-            
-            // 某些衣服有texture_03_1.png和texture_03_2.png，随机选一个
-            const hasVariants = ['2016.xmas', '2017.summer.super', '2017.summer.normal', '2019.deluxe'];
-            if (hasVariants.includes(modelName)) {
-                const variant = Math.random() > 0.5 ? '1' : '2';
-                newTexture3 = baseUrl + "texture_03_" + variant + ".png";
-            }
-            
-            // 所有路径都改为绝对路径
-            data.model = window.location.origin + data.model.replace('../', '/');
-            data.textures[0] = window.location.origin + data.textures[0].replace('../', '/');
-            data.textures[1] = newTexture1;
-            data.textures[2] = newTexture2;
-            data.textures[3] = newTexture3;
-            
-            // 同时更新动作路径为绝对路径
-            const motionBaseUrl = window.location.origin + "/2233/model/" + person + "/";
-            if (data.motions) {
-                for (let motionType in data.motions) {
-                    if (Array.isArray(data.motions[motionType])) {
-                        data.motions[motionType].forEach(motion => {
-                            if (motion.file) {
-                                motion.file = motion.file.replace('../', motionBaseUrl);
-                            }
-                        });
-                    }
-                }
-            }
-            
-            data.name = person + "-" + modelName;
-            
-            console.log('Waifu: 新textures', JSON.stringify(data.textures));
-            console.log('Waifu: texture_01路径', newTexture1);
-            console.log('Waifu: texture_02路径', newTexture2);
-            console.log('Waifu: texture_03路径', newTexture3);
-            
-            // 创建临时配置文件
-            const configJson = JSON.stringify(data);
-            const blob = new Blob([configJson], {type: 'application/json'});
-            const blobUrl = URL.createObjectURL(blob);
-            
-            console.log('Waifu: 创建Blob URL', blobUrl);
-            console.log('Waifu: 配置内容', configJson);
-            
-            // 加载新配置
-            loadlive2d('live2d', blobUrl);
-            
-            // 5秒后清理Blob URL（延长时间确保加载完成）
-            setTimeout(() => {
-                URL.revokeObjectURL(blobUrl);
-                console.log('Waifu: 已清理Blob URL');
-            }, 5000);
-        },
-        error: function(xhr, status, error) {
-            console.error('Waifu: 获取配置失败', status, error);
-            console.error('Waifu: 响应内容', xhr.responseText);
-            showMessage('换衣服失败了呢~', 2000);
-        }
-    });
+    // 使用原始的递增ID方式换衣服（更可靠）
+    if (window.waifuGlobals.model_p === 22) {
+        // 当前是22娘，递增22娘的衣服ID
+        window.waifuGlobals.m22_id += 1;
+        const apiUrl = '/api/live2d-22.json?t=' + window.waifuGlobals.m22_id + '&_=' + Date.now();
+        console.log('Waifu: 22娘换衣服 ID=' + window.waifuGlobals.m22_id, apiUrl);
+        loadlive2d('live2d', apiUrl);
+    } else {
+        // 当前是33娘，递增33娘的衣服ID
+        window.waifuGlobals.m33_id += 1;
+        const apiUrl = '/api/live2d-33.json?t=' + window.waifuGlobals.m33_id + '&_=' + Date.now();
+        console.log('Waifu: 33娘换衣服 ID=' + window.waifuGlobals.m33_id, apiUrl);
+        loadlive2d('live2d', apiUrl);
+    }
     
     showMessage('我的新衣服好看嘛',4000);
 });
