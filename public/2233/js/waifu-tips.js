@@ -104,83 +104,31 @@ $('.waifu-tool .street-view').off('click').click(function (){
         return;
     }
     
-    // 使用原始的递增ID方式换衣服（更可靠）
+    // 完全移除并重建Live2D组件来强制换衣服
     const person = window.waifuGlobals.model_p === 22 ? 22 : 33;
     const idKey = person === 22 ? 'm22_id' : 'm33_id';
     
     window.waifuGlobals[idKey] += 1;
-    const timestamp = Date.now();
-    const apiUrl = '/api/live2d-' + person + '.json?t=' + window.waifuGlobals[idKey] + '&_=' + timestamp;
+    const apiUrl = '/api/live2d-' + person + '.json?t=' + window.waifuGlobals[idKey];
     
-    // 先获取配置，修改纹理URL时间戳，再加载
-    $.ajax({
-        url: apiUrl,
-        dataType: 'json',
-        cache: false,
-        success: function(config) {
-            // 给所有资源URL添加客户端时间戳，并转换为绝对URL
-            const clientTimestamp = Date.now();
-            const origin = window.location.origin;
-            
-            // 转换相对路径为绝对URL的辅助函数
-            function toAbsoluteUrl(url) {
-                if (url.startsWith('http://') || url.startsWith('https://')) {
-                    return url; // 已经是绝对URL
-                }
-                // 移除开头的 ../
-                url = url.replace(/^\.\.\//, '/');
-                return origin + url;
-            }
-            
-            // 修改model URL
-            if (config.model) {
-                config.model = toAbsoluteUrl(config.model.replace(/\?v=\d+/, '')) + '?v=' + clientTimestamp;
-            }
-            
-            // 修改所有texture URL
-            if (config.textures && Array.isArray(config.textures)) {
-                config.textures = config.textures.map(url => {
-                    return toAbsoluteUrl(url.replace(/\?v=\d+/, '')) + '?v=' + clientTimestamp;
-                });
-            }
-            
-            // 修改所有motion URL
-            if (config.motions) {
-                for (let motionType in config.motions) {
-                    if (Array.isArray(config.motions[motionType])) {
-                        config.motions[motionType].forEach(motion => {
-                            if (motion.file) {
-                                motion.file = toAbsoluteUrl(motion.file.replace(/\?v=\d+/, '')) + '?v=' + clientTimestamp;
-                            }
-                        });
-                    }
-                }
-            }
-            
-            // 创建Blob URL
-            const configJson = JSON.stringify(config);
-            const blob = new Blob([configJson], {type: 'application/json'});
-            const blobUrl = URL.createObjectURL(blob);
-            
-            // 替换canvas
-            const canvas = document.getElementById('live2d');
-            if (canvas) {
-                const parent = canvas.parentNode;
-                const newCanvas = canvas.cloneNode(false);
-                parent.replaceChild(newCanvas, canvas);
-            }
-            
-            // 加载新配置
-            setTimeout(() => {
-                loadlive2d('live2d', blobUrl);
-                // 清理Blob URL
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 3000);
-            }, 100);
-        },
-        error: function(xhr, status, error) {
-            showMessage('换衣服失败了呢~', 2000);
-        }
-    });
+    // 完全移除canvas元素
+    const oldCanvas = document.getElementById('live2d');
+    if (oldCanvas) {
+        const parent = oldCanvas.parentNode;
+        parent.removeChild(oldCanvas);
+        
+        // 创建全新的canvas
+        const newCanvas = document.createElement('canvas');
+        newCanvas.id = 'live2d';
+        newCanvas.width = 280;
+        newCanvas.height = 250;
+        parent.appendChild(newCanvas);
+        
+        // 等待canvas插入DOM后再加载
+        setTimeout(() => {
+            loadlive2d('live2d', apiUrl);
+        }, 200);
+    }
     
     showMessage('我的新衣服好看嘛',4000);
 });
