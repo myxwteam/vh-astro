@@ -78,15 +78,19 @@ export const GET: APIRoute = ({ url, request }) => {
     modelName = modelNames[id];
   }
   const baseUrl = '../';
-  const cacheBuster = '?v=' + Date.now(); // 添加时间戳避免缓存
+  // 每次请求都生成新的时间戳（确保每次都不同）
+  const requestTimestamp = Date.now() + Math.floor(Math.random() * 1000);
+  const cacheBuster = '?v=' + requestTimestamp;
   
   const live2dConfig = {
     type: "Live2D Model Setting",
     name: `${person}-${modelName}`,
     label: person,
-    debug_timestamp: Date.now(),
+    debug_timestamp: requestTimestamp,
     debug_model_id: id,
     debug_model_name: modelName,
+    debug_t_param: t_,
+    debug_seed: t_ ? parseInt(t_) : null,
     model: `${baseUrl}2233/model/${person}/${person}.v2.moc${cacheBuster}`,
     textures: [
       `${baseUrl}2233/model/${person}/texture_00.png${cacheBuster}`,
