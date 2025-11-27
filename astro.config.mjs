@@ -5,6 +5,7 @@ import Compress from "@playform/compress";
 import Compressor from "astro-compressor";
 import { defineConfig } from 'astro/config';
 import { fileURLToPath } from 'url';
+import cloudflare from '@astrojs/cloudflare';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Markdown 配置================
 import remarkMath from "remark-math";
@@ -18,6 +19,8 @@ import swup from '@swup/astro';
 // https://astro.build/config
 export default defineConfig({
 	site: SITE_INFO.Site,
+	output: 'hybrid',
+	adapter: cloudflare(),
 	build: { assets: 'vh_static' },
 	integrations: [swup({
 		theme: false,
