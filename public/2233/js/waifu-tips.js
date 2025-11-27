@@ -110,31 +110,43 @@ $('.waifu-tool .street-view').off('click').click(function (){
     const person = window.waifuGlobals.model_p === 22 ? "22" : "33";
     console.log('Waifu: 换衣服到', modelName);
     
-    // 通过AJAX获取API的基础配置
+    // 通过AJAX获取当前人物的基础配置
     $.ajax({
-        url: '/api/live2d-' + person + '.json',
+        url: '/api/live2d-' + person + '.json?_=' + Date.now(),
         dataType: 'json',
-        cache: false,  // 禁用缓存
+        cache: false,
         success: function(data) {
-            // 只替换衣服纹理路径
-            data.textures[1] = "../2233/model/" + person + "/closet." + modelName + "/texture_01.png";
-            data.textures[2] = "../2233/model/" + person + "/closet." + modelName + "/texture_02.png";
-            data.textures[3] = "../2233/model/" + person + "/closet." + modelName + "/texture_03.png";
+            console.log('Waifu: 获取到配置', data);
+            console.log('Waifu: 原始textures', data.textures);
+            
+            // 替换衣服纹理（保持texture_00.png不变，只替换1,2,3）
+            const basePath = "../2233/model/" + person + "/closet." + modelName + "/";
+            data.textures[1] = basePath + "texture_01.png";
+            data.textures[2] = basePath + "texture_02.png";
+            data.textures[3] = basePath + "texture_03.png";
             data.name = person + "-" + modelName;
             
-            console.log('Waifu: 生成新配置', data.name);
+            console.log('Waifu: 新textures', data.textures);
+            console.log('Waifu: 新配置', data);
             
-            // 创建Blob URL并加载
-            const newBlob = new Blob([JSON.stringify(data)], {type: 'application/json'});
-            const newUrl = URL.createObjectURL(newBlob);
+            // 创建临时配置文件
+            const configJson = JSON.stringify(data);
+            const blob = new Blob([configJson], {type: 'application/json'});
+            const blobUrl = URL.createObjectURL(blob);
             
-            loadlive2d('live2d', newUrl);
+            console.log('Waifu: 创建Blob URL', blobUrl);
             
-            // 清理URL对象
-            setTimeout(() => URL.revokeObjectURL(newUrl), 5000);
+            // 加载新配置
+            loadlive2d('live2d', blobUrl);
+            
+            // 3秒后清理Blob URL
+            setTimeout(() => {
+                URL.revokeObjectURL(blobUrl);
+                console.log('Waifu: 已清理Blob URL');
+            }, 3000);
         },
-        error: function() {
-            console.error('Waifu: 获取配置失败');
+        error: function(xhr, status, error) {
+            console.error('Waifu: 获取配置失败', status, error);
             showMessage('换衣服失败了呢~', 2000);
         }
     });
