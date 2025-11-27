@@ -85,13 +85,13 @@ $('.waifu-tool .drivers-license-o').off('click').click(function(){
     if(window.waifuGlobals.model_p===33){
         // 当前是33娘，切换到22娘
         console.log('Waifu: 从33娘切换到22娘');
-        loadlive2d('live2d','/api/live2d-22.json?_=' + cacheBuster);
+        loadlive2d('live2d','/api/live2d-22?_=' + cacheBuster);
         window.waifuGlobals.model_p = 22;
         showMessage('33援交有点累了，现在该我上场了',4000) // 22娘说的话
     }else{
         // 当前是22娘，切换到33娘
         console.log('Waifu: 从22娘切换到33娘');
-        loadlive2d('live2d','/api/live2d-33.json?_=' + cacheBuster);
+        loadlive2d('live2d','/api/live2d-33?_=' + cacheBuster);
         window.waifuGlobals.model_p = 33;
         showMessage('我又回来了！',4000) // 33娘说的话
     }
@@ -109,7 +109,7 @@ $('.waifu-tool .street-view').off('click').click(function (){
     const idKey = person === 22 ? 'm22_id' : 'm33_id';
     
     window.waifuGlobals[idKey] += 1;
-    const apiUrl = '/api/live2d-' + person + '.json?t=' + window.waifuGlobals[idKey];
+    const apiUrl = '/api/live2d-' + person + '?t=' + window.waifuGlobals[idKey];
     
     // 完全移除canvas元素
     const oldCanvas = document.getElementById('live2d');
@@ -139,7 +139,7 @@ $('.waifu-tool .street-view').off('click').click(function (){
         console.log('Waifu: 初始化33娘模型');
         console.log('Waifu: loadlive2d函数类型=', typeof loadlive2d);
         try {
-            loadlive2d('live2d','/api/live2d-33.json');
+            loadlive2d('live2d','/api/live2d-33');
             console.log('Waifu: 初始化调用成功');
         } catch (error) {
             console.error('Waifu: 初始化调用失败', error);
