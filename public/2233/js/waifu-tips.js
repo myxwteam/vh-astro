@@ -119,25 +119,43 @@ $('.waifu-tool .street-view').off('click').click(function (){
             console.log('Waifu: 获取到配置', data);
             console.log('Waifu: 原始textures', JSON.stringify(data.textures));
             
-            // 替换衣服纹理（保持texture_00.png不变，只替换1,2,3）
-            const basePath = "../2233/model/" + person + "/closet." + modelName + "/";
+            // 使用绝对路径（从网站根目录开始）替换衣服纹理
+            const baseUrl = window.location.origin + "/2233/model/" + person + "/closet." + modelName + "/";
             
-            // 构建新的纹理路径
-            const newTexture1 = basePath + "texture_01.png";
-            const newTexture2 = basePath + "texture_02.png";
+            // 构建新的纹理绝对路径
+            const newTexture1 = baseUrl + "texture_01.png";
+            const newTexture2 = baseUrl + "texture_02.png";
             // 处理texture_03的两种情况：有些是texture_03.png，有些是texture_03_1.png
-            let newTexture3 = basePath + "texture_03.png";
+            let newTexture3 = baseUrl + "texture_03.png";
             
             // 某些衣服有texture_03_1.png和texture_03_2.png，随机选一个
             const hasVariants = ['2016.xmas', '2017.summer.super', '2017.summer.normal', '2019.deluxe'];
             if (hasVariants.includes(modelName)) {
                 const variant = Math.random() > 0.5 ? '1' : '2';
-                newTexture3 = basePath + "texture_03_" + variant + ".png";
+                newTexture3 = baseUrl + "texture_03_" + variant + ".png";
             }
             
+            // 所有路径都改为绝对路径
+            data.model = window.location.origin + data.model.replace('../', '/');
+            data.textures[0] = window.location.origin + data.textures[0].replace('../', '/');
             data.textures[1] = newTexture1;
             data.textures[2] = newTexture2;
             data.textures[3] = newTexture3;
+            
+            // 同时更新动作路径为绝对路径
+            const motionBaseUrl = window.location.origin + "/2233/model/" + person + "/";
+            if (data.motions) {
+                for (let motionType in data.motions) {
+                    if (Array.isArray(data.motions[motionType])) {
+                        data.motions[motionType].forEach(motion => {
+                            if (motion.file) {
+                                motion.file = motion.file.replace('../', motionBaseUrl);
+                            }
+                        });
+                    }
+                }
+            }
+            
             data.name = person + "-" + modelName;
             
             console.log('Waifu: 新textures', JSON.stringify(data.textures));
