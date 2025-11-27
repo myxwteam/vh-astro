@@ -105,42 +105,20 @@ $('.waifu-tool .street-view').off('click').click(function (){
         return;
     }
     
-    // 完全移除并重建Live2D组件来强制换衣服
+    // 递增ID换衣服
     const person = window.waifuGlobals.model_p === 22 ? 22 : 33;
     const idKey = person === 22 ? 'm22_id' : 'm33_id';
     
     window.waifuGlobals[idKey] += 1;
+    // 循环：当ID超过19时重置为0
+    if (window.waifuGlobals[idKey] > 19) {
+        window.waifuGlobals[idKey] = 0;
+    }
+    
     const apiUrl = '/api/live2d-' + person + '/' + window.waifuGlobals[idKey] + '.json';
     
-    // 完全移除canvas元素
-    const oldCanvas = document.getElementById('live2d');
-    if (oldCanvas) {
-        const parent = oldCanvas.parentNode;
-        
-        // 创建全新的canvas并复制样式
-        const newCanvas = document.createElement('canvas');
-        newCanvas.id = 'live2d';
-        newCanvas.width = 280;
-        newCanvas.height = 250;
-        
-        // 复制原canvas的style属性
-        if (oldCanvas.style.cssText) {
-            newCanvas.style.cssText = oldCanvas.style.cssText;
-        }
-        
-        // 复制class属性
-        if (oldCanvas.className) {
-            newCanvas.className = oldCanvas.className;
-        }
-        
-        // 替换canvas
-        parent.replaceChild(newCanvas, oldCanvas);
-        
-        // 等待canvas插入DOM后再加载
-        setTimeout(() => {
-            loadlive2d('live2d', apiUrl);
-        }, 200);
-    }
+    // 直接加载新配置，让Live2D自己处理更新
+    loadlive2d('live2d', apiUrl);
     
     showMessage('我的新衣服好看嘛',4000);
 });
