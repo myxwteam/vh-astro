@@ -114,27 +114,9 @@ $('.waifu-tool .street-view').off('click').click(function (){
         console.log('Waifu: ID=' + window.waifuGlobals.m22_id);
         console.log('Waifu: API URL=', apiUrl);
         
-        // 先请求API查看返回内容
-        $.getJSON(apiUrl, function(data) {
-            console.log('Waifu: API返回配置', data);
-            console.log('Waifu: 模型名称=', data.name);
-            console.log('Waifu: debug_model_name=', data.debug_model_name);
-            console.log('Waifu: debug_model_id=', data.debug_model_id);
-            
-            // 强制重新加载：清空canvas
-            const canvas = document.getElementById('live2d');
-            if (canvas && canvas.getContext) {
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                }
-            }
-            
-            // 延迟加载确保清理完成
-            setTimeout(() => {
-                loadlive2d('live2d', apiUrl);
-            }, 50);
-        });
+        // 直接加载，不需要先请求（已经有时间戳了）
+        console.log('Waifu: 开始加载新配置');
+        loadlive2d('live2d', apiUrl);
     } else {
         // 当前是33娘，递增33娘的衣服ID
         window.waifuGlobals.m33_id += 1;
@@ -144,27 +126,9 @@ $('.waifu-tool .street-view').off('click').click(function (){
         console.log('Waifu: ID=' + window.waifuGlobals.m33_id);
         console.log('Waifu: API URL=', apiUrl);
         
-        // 先请求API查看返回内容
-        $.getJSON(apiUrl, function(data) {
-            console.log('Waifu: API返回配置', data);
-            console.log('Waifu: 模型名称=', data.name);
-            console.log('Waifu: debug_model_name=', data.debug_model_name);
-            console.log('Waifu: debug_model_id=', data.debug_model_id);
-            
-            // 强制重新加载：清空canvas
-            const canvas = document.getElementById('live2d');
-            if (canvas && canvas.getContext) {
-                const ctx = canvas.getContext('2d');
-                if (ctx) {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                }
-            }
-            
-            // 延迟加载确保清理完成
-            setTimeout(() => {
-                loadlive2d('live2d', apiUrl);
-            }, 50);
-        });
+        // 直接加载，不需要先请求（已经有时间戳了）
+        console.log('Waifu: 开始加载新配置');
+        loadlive2d('live2d', apiUrl);
     }
     
     showMessage('我的新衣服好看嘛',4000);
