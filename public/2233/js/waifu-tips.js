@@ -118,18 +118,29 @@ $('.waifu-tool .street-view').off('click').click(function (){
         dataType: 'json',
         cache: false,
         success: function(config) {
-            // 给所有资源URL添加客户端时间戳
+            // 给所有资源URL添加客户端时间戳，并转换为绝对URL
             const clientTimestamp = Date.now();
+            const origin = window.location.origin;
+            
+            // 转换相对路径为绝对URL的辅助函数
+            function toAbsoluteUrl(url) {
+                if (url.startsWith('http://') || url.startsWith('https://')) {
+                    return url; // 已经是绝对URL
+                }
+                // 移除开头的 ../
+                url = url.replace(/^\.\.\//, '/');
+                return origin + url;
+            }
             
             // 修改model URL
             if (config.model) {
-                config.model = config.model.replace(/\?v=\d+/, '') + '?v=' + clientTimestamp;
+                config.model = toAbsoluteUrl(config.model.replace(/\?v=\d+/, '')) + '?v=' + clientTimestamp;
             }
             
             // 修改所有texture URL
             if (config.textures && Array.isArray(config.textures)) {
                 config.textures = config.textures.map(url => {
-                    return url.replace(/\?v=\d+/, '') + '?v=' + clientTimestamp;
+                    return toAbsoluteUrl(url.replace(/\?v=\d+/, '')) + '?v=' + clientTimestamp;
                 });
             }
             
@@ -139,7 +150,7 @@ $('.waifu-tool .street-view').off('click').click(function (){
                     if (Array.isArray(config.motions[motionType])) {
                         config.motions[motionType].forEach(motion => {
                             if (motion.file) {
-                                motion.file = motion.file.replace(/\?v=\d+/, '') + '?v=' + clientTimestamp;
+                                motion.file = toAbsoluteUrl(motion.file.replace(/\?v=\d+/, '')) + '?v=' + clientTimestamp;
                             }
                         });
                     }
