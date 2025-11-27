@@ -102,7 +102,7 @@ export default {
     // Waline 评论
     Waline: {
       enable: true,
-      serverURL: ''
+      serverURL: 'https://xwteam-blog-waline.netlify.app/.netlify/functions/comment'
     }
   },
   // Han Analytics 统计（https://github.com/uxiaohan/HanAnalytics）
