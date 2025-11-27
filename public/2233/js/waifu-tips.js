@@ -117,17 +117,33 @@ $('.waifu-tool .street-view').off('click').click(function (){
         cache: false,
         success: function(data) {
             console.log('Waifu: 获取到配置', data);
-            console.log('Waifu: 原始textures', data.textures);
+            console.log('Waifu: 原始textures', JSON.stringify(data.textures));
             
             // 替换衣服纹理（保持texture_00.png不变，只替换1,2,3）
             const basePath = "../2233/model/" + person + "/closet." + modelName + "/";
-            data.textures[1] = basePath + "texture_01.png";
-            data.textures[2] = basePath + "texture_02.png";
-            data.textures[3] = basePath + "texture_03.png";
+            
+            // 构建新的纹理路径
+            const newTexture1 = basePath + "texture_01.png";
+            const newTexture2 = basePath + "texture_02.png";
+            // 处理texture_03的两种情况：有些是texture_03.png，有些是texture_03_1.png
+            let newTexture3 = basePath + "texture_03.png";
+            
+            // 某些衣服有texture_03_1.png和texture_03_2.png，随机选一个
+            const hasVariants = ['2016.xmas', '2017.summer.super', '2017.summer.normal', '2019.deluxe'];
+            if (hasVariants.includes(modelName)) {
+                const variant = Math.random() > 0.5 ? '1' : '2';
+                newTexture3 = basePath + "texture_03_" + variant + ".png";
+            }
+            
+            data.textures[1] = newTexture1;
+            data.textures[2] = newTexture2;
+            data.textures[3] = newTexture3;
             data.name = person + "-" + modelName;
             
-            console.log('Waifu: 新textures', data.textures);
-            console.log('Waifu: 新配置', data);
+            console.log('Waifu: 新textures', JSON.stringify(data.textures));
+            console.log('Waifu: texture_01路径', newTexture1);
+            console.log('Waifu: texture_02路径', newTexture2);
+            console.log('Waifu: texture_03路径', newTexture3);
             
             // 创建临时配置文件
             const configJson = JSON.stringify(data);
@@ -135,18 +151,20 @@ $('.waifu-tool .street-view').off('click').click(function (){
             const blobUrl = URL.createObjectURL(blob);
             
             console.log('Waifu: 创建Blob URL', blobUrl);
+            console.log('Waifu: 配置内容', configJson);
             
             // 加载新配置
             loadlive2d('live2d', blobUrl);
             
-            // 3秒后清理Blob URL
+            // 5秒后清理Blob URL（延长时间确保加载完成）
             setTimeout(() => {
                 URL.revokeObjectURL(blobUrl);
                 console.log('Waifu: 已清理Blob URL');
-            }, 3000);
+            }, 5000);
         },
         error: function(xhr, status, error) {
             console.error('Waifu: 获取配置失败', status, error);
+            console.error('Waifu: 响应内容', xhr.responseText);
             showMessage('换衣服失败了呢~', 2000);
         }
     });
